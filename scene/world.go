@@ -1,6 +1,7 @@
 package scene
 
 import (
+	"fmt"
 	"log"
 	"sync"
 
@@ -107,6 +108,8 @@ func (w *World) BlockChunk(block internal.Vec3) *internal.Chunk {
 
 func (w *World) UpdateBlock(id internal.Vec3, tp int) {
 	chunk := w.BlockChunk(id)
+	fmt.Printf("CHUNK: %+v\n", chunk)
+	fmt.Printf("TP: %+v\n", tp)
 	if chunk != nil {
 		if tp != 0 {
 			chunk.Add(id, tp)

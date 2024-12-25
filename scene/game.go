@@ -17,7 +17,8 @@ import (
 var (
 	PprofPort = flag.String("pprof", "", "http pprof port")
 
-	game *Game
+	game  *Game
+	scale = 1.0
 )
 
 type Game struct {
@@ -130,6 +131,9 @@ func (g *Game) onMouseButtonCallback(win *glfw.Window, button glfw.MouseButton, 
 	head := internal.NearBlock(g.Camera.Pos())
 	foot := head.Down()
 	block, prev := g.world.HitTest(g.Camera.Pos(), g.Camera.Front())
+	fmt.Printf("BLOCK: %+v\n", block)
+	fmt.Printf("PREV: %+v\n", prev)
+	fmt.Printf("GAME: %+v\n", g)
 	if button == glfw.MouseButton2 && action == glfw.Press {
 		if prev != nil && *prev != head && *prev != foot {
 			g.world.UpdateBlock(*prev, g.item)
@@ -167,6 +171,8 @@ func (g *Game) onKeyCallback(win *glfw.Window, key glfw.Key, scancode int, actio
 	if action != glfw.Press {
 		return
 	}
+	fmt.Printf("GAME: %+v\n", g)
+	offsetKey := 48 //offset key map glfw
 	switch key {
 	case glfw.KeyTab:
 		g.Camera.FlipFlying()
@@ -175,10 +181,15 @@ func (g *Game) onKeyCallback(win *glfw.Window, key glfw.Key, scancode int, actio
 		if g.world.HasBlock(internal.Vec3{block.X, block.Y - 2, block.Z}) {
 			g.vy = 8
 		}
+	case glfw.Key1, glfw.Key2, glfw.Key3, glfw.Key4, glfw.Key5, glfw.Key6, glfw.Key7, glfw.Key8, glfw.Key9:
+		g.item = int(key) - offsetKey
+		g.blockRender.UpdateItem(g.item)
+
 	case glfw.KeyE:
 		g.itemidx = (1 + g.itemidx) % len(internal.AvailableItems)
 		g.item = internal.AvailableItems[g.itemidx]
 		g.blockRender.UpdateItem(g.item)
+
 	case glfw.KeyR:
 		g.itemidx--
 		if g.itemidx < 0 {
@@ -186,6 +197,11 @@ func (g *Game) onKeyCallback(win *glfw.Window, key glfw.Key, scancode int, actio
 		}
 		g.item = internal.AvailableItems[g.itemidx]
 		g.blockRender.UpdateItem(g.item)
+	case glfw.KeyO:
+		if !g.Camera.flying {
+			g.Camera.FlipFlying()
+			g.Camera.OnMoveChange(MoveUp, 8)
+		}
 	}
 }
 

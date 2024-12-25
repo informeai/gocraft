@@ -12,6 +12,7 @@ const (
 	MoveBackward
 	MoveLeft
 	MoveRight
+	MoveUp
 )
 
 type Camera struct {
@@ -118,6 +119,8 @@ func (c *Camera) OnMoveChange(dir CameraMovement, delta float32) {
 		c.pos = c.pos.Sub(c.right.Mul(delta))
 	case MoveRight:
 		c.pos = c.pos.Add(c.right.Mul(delta))
+	case MoveUp:
+		c.pos = c.pos.Add(c.up.Mul(delta))
 	}
 }
 func (c *Camera) updateAngles() {
